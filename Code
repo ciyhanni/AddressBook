@@ -1,0 +1,231 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+const int GLOBAL_SIZE = 150;
+
+struct MyEntry
+{
+char firstName[GLOBAL_SIZE];
+char lastName[GLOBAL_SIZE];
+char contactNum[GLOBAL_SIZE];
+char address[GLOBAL_SIZE];
+};
+
+bool addEntry(MyEntry myEntry[GLOBAL_SIZE], int &count)
+{
+if(count >= GLOBAL_SIZE) 
+return false;
+cout << "Entry [" << count + 1 << "] : " << endl;
+cout << "Enter the first name: "; cin.getline(myEntry[count].firstName,
+sizeof(myEntry[count].firstName));
+cout << "Enter the last name: "; cin.getline(myEntry[count].lastName,
+sizeof(myEntry[count].lastName));
+cout << "Enter the phone number: "; cin.getline(myEntry[count].contactNum,
+sizeof(myEntry[count].contactNum));
+cout << "Enter the address: "; cin.getline(myEntry[count].address,
+sizeof(myEntry[count].address));
+count++;
+return true;
+}
+
+bool editEntry(MyEntry myEntry[GLOBAL_SIZE], int id, int count)
+{
+id--;
+if(id < 0 || id >= count)
+return false;
+cout << "Enter the first name: "; cin.getline(myEntry[id].firstName,
+sizeof(myEntry[id].firstName));
+cout << "Enter the last name: "; cin.getline(myEntry[id].lastName,
+sizeof(myEntry[id].lastName));
+cout << "Enter the phone number: "; cin.getline(myEntry[id].contactNum,
+sizeof(myEntry[id].contactNum));
+cout << "Enter the address: "; cin.getline(myEntry[id].address,
+sizeof(myEntry[id].address));
+return true;
+}
+
+bool displayEntry(MyEntry myEntry[GLOBAL_SIZE], int id, int count)
+{
+id--;
+if(id < 0 || id >= count) return false;
+cout << "Entry [" << id + 1 << "] : " << endl;
+cout << "First name: " << myEntry[id].firstName << endl;
+cout << "Last name: " << myEntry[id].lastName << endl;
+cout << "Phone number: " << myEntry[id].contactNum << endl;
+cout << "Address: " << myEntry[id].address << endl << endl;
+return true;
+}
+
+int searchEntry(MyEntry myEntry[GLOBAL_SIZE], string nameTarget, int count)
+{
+int i;
+int N = 0;
+for(i = 0; i < count; i++)
+{
+if(std::string(myEntry[i].lastName) == nameTarget)
+{
+displayEntry(myEntry, i + 1, count); N++;
+}
+} 
+return N;
+}
+
+bool deleteEntry(MyEntry myEntry[GLOBAL_SIZE], int id, int &count)
+{
+int i;
+id--;
+if(id < 0 || id >= count) return false;
+for(i = id; i < count - 1; i++)
+{
+myEntry[i] = myEntry[i + 1];
+}
+count--;
+return true;
+}
+
+int main()
+{
+int count = 0;
+MyEntry myEntry[GLOBAL_SIZE];
+int choice;
+int contact_id;
+bool bQuit = false;
+string lastName;
+char lastNameHolder[GLOBAL_SIZE];
+while(bQuit == false)
+{
+cout << "Address Book Menu " << endl << endl;
+cout << " 1. Add contact " << endl;
+cout << " 2. Edit contact " << endl;
+cout << " 3. Delete contact " << endl;
+cout << " 4. View contacts " << endl;
+cout << " 5. Search addressbook by last name" << endl;
+cout << " 6. Exit " << endl;
+cout << "+-------------------------------------+" << endl;
+cout << "Number of contacts: " << count << endl;
+cout << "Enter your choice: ";
+if(cin >> choice && choice >= 1 && choice <= 6)
+{
+cin.ignore();
+switch(choice)
+{
+case 1 :
+{
+if(!addEntry(myEntry, count))
+{
+cout << "+ The address book menu is full. Delete a contact and try again."
+<< endl;
+}
+else
+{
+cout << endl;
+cout << "The contact has been added to the list." << endl;
+}
+}
+break;
+case 2 :
+{
+cout << "Enter the contact entry: ";
+if(cin >> contact_id && (static_cast<void>(cin.ignore()), editEntry(myEntry,
+contact_id, count)))
+{
+cout << "The entry [" << contact_id << "] has been updated." << endl;
+}
+else
+{
+if(!cin)
+{
+cin.clear();
+cin.ignore(1000, '\n');
+}
+cout << " Invalid contact number or the contact does not exist. Try again." <<
+endl;
+}
+}
+break;
+case 3 :
+{
+cout << "Enter the contact entry: ";
+if(cin >> contact_id && (static_cast<void>(cin.ignore()), deleteEntry(myEntry,
+contact_id, count)))
+{
+cout << "The entry [" << contact_id << "] has been successfully removed."
+<< endl;
+}
+else
+{
+if(!cin)
+{
+cin.clear();
+cin.ignore(1000, '\n');
+}
+cout << "+ Cannot remove the entry number " << contact_id << ". Try again."
+<< endl;
+}
+}
+break;
+case 4 :
+{
+cout << "Enter the contact entry: ";
+if(cin >> contact_id && (static_cast<void>(cin.ignore()), displayEntry(myEntry,
+contact_id, count)))
+{
+}
+else
+{
+if(!cin)
+{
+cin.clear();
+cin.ignore(1000, '\n');
+}
+cout << "+ Invalid input. The contact does not exist. Please try again." <<
+endl;
+}
+}
+break;
+case 5 :
+{
+int searchCount = 0;
+cout << "Enter the contact last name: ";
+if(cin.getline(lastNameHolder, sizeof(lastNameHolder)) &&
+(static_cast<void>(lastName = lastNameHolder), searchCount = searchEntry(myEntry,
+lastName, count)))
+{
+cout << "Found " << searchCount << " entries that match the last name" <<
+endl;
+}
+else
+{
+if(!cin)
+{
+cin.clear();
+cin.ignore(1000, '\n');
+}
+cout << "+ The contact record you request does not exist. Please try again."
+<< endl;
+}
+}
+break;
+case 6 : bQuit = true; break;
+}
+}
+else
+{
+if(!cin)
+{
+cin.clear();
+cin.ignore(1000, '\n');
+}
+cout << "Choice is invalid. Try again. " << endl;
+}
+if(bQuit == false)
+{
+cout << "Press any key to continue. "; cin.get();
+}
+}
+cout << endl;
+cout << "Press any key to continue end the program. \n "; cin.get();
+return 0;
+}
